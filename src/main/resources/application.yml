@@ -1,0 +1,43 @@
+server:
+  port: 8080
+  context-path: "/"
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+
+spring:
+  security:
+    user:
+      name: user
+      password: password
+
+  datasource:
+    url: jdbc:db2://localhost:50000/db
+    username: tpsuser
+    password: s3cret
+    driverClassName: com.ibm.db2.jcc.DB2Driver
+  jpa:
+    database-platform: org.hibernate.dialect.DB2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#      settings:
+#        web-allow-others: true
+
+#    basic:
+#      enabled: false
+#security:
+#  ignored: /**
+#  basic:
+#    enabled: false
+#management:
+#  security:
+#    enabled: false
