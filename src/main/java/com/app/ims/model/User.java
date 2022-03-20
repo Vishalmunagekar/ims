@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,9 +22,11 @@ public class User extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank(message = "Username is mandatory")
     @Column(name = "username", unique=true)
     private String username;
 
+    @NotBlank(message = "Password is mandatory")
     @Column(name = "password")
     private String password;
 

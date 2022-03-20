@@ -4,9 +4,11 @@ server:
 
 logging:
   level:
-    org:
-      springframework:
-        web: DEBUG
+    root: ERROR
+    org.springframework.web: ERROR
+    com.app.ims: DEBUG
+    org.hibernate: ERROR
+
 
 spring:
   security:
@@ -19,3 +21,9 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb
     generate-unique-name: false
+
+  jpa:
+    generate-ddl: true
+
+    hibernate:
+      ddl-auto: update

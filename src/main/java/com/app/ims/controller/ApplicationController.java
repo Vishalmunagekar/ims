@@ -10,7 +10,6 @@ import com.app.ims.service.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +35,7 @@ public class ApplicationController {
     private JwtUtil jwtUtil;
 
     @GetMapping(value = "/init")
-    public ResponseEntity<?> init(){
+    public ResponseEntity<String> init(){
         URI selfLink = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
         if(applicationService.init1() && applicationService.init2()){
             return ResponseEntity.created(selfLink).body("Success!");
@@ -45,7 +44,7 @@ public class ApplicationController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody User user){
+    public ResponseEntity<String> login(@RequestBody User user){
         LOGGER.debug("in login method User : {}", user.toString());
         URI selfLink = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
         final Authentication authentication = authenticationManager.authenticate(

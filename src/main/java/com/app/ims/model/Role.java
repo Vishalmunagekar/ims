@@ -27,4 +27,13 @@ public class Role {
 
     @Column(name="description")
     private String description;
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", roleName='" + roleName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
