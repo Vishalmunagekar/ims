@@ -1,9 +1,11 @@
 package com.app.ims.security.config;
 
+import com.app.ims.common.Constants;
 import com.app.ims.security.filter.JwtAuthenticationFilter;
 import com.app.ims.security.service.ImsUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -38,15 +41,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .antMatchers("/api/application/**").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/index.html").permitAll()
+        httpSecurity.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/", "/index.html/**", "/css/**", "/js/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .csrf()
-                .disable();
+                .antMatchers("/api/application/init", "/api/application/login").permitAll()
+                .antMatchers("/api/user/**").hasAuthority(Constants.ADMIN_ROLE)
+                .antMatchers("/api/order/**", "/api/product/**","/api/test/**").hasAnyAuthority(Constants.ADMIN_ROLE, Constants.USER_ROLE)
+                .anyRequest()
+                .authenticated();
         httpSecurity.headers().frameOptions().disable(); //to access h2 database console
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

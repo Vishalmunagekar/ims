@@ -1,6 +1,6 @@
 package com.app.ims.service;
 
-import com.app.ims.Constants;
+import com.app.ims.common.Constants;
 import com.app.ims.model.*;
 import com.app.ims.repository.OrderRepository;
 import com.app.ims.repository.ProductRepository;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ApplicationService {

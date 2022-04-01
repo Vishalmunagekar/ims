@@ -1,4 +1,4 @@
-package com.app.ims;
+package com.app.ims.common;
 
 public class Constants {
     public static final String TOKEN_PREFIX = "Bearer ";

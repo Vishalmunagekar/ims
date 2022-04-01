@@ -9,7 +9,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableWebMvc
-@EnableSwagger2
 public class InventoryManagementApplication {
 
 	public static void main(String[] args) {

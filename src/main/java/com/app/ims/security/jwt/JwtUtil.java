@@ -1,6 +1,6 @@
 package com.app.ims.security.jwt;
 
-import com.app.ims.Constants;
+import com.app.ims.common.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
