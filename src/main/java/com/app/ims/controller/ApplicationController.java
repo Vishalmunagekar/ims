@@ -42,22 +42,4 @@ public class ApplicationController {
         }
         return ResponseEntity.notFound().build();
     }
-
-    @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody User user){
-        LOGGER.debug("in login method User : {}", user.toString());
-        URI selfLink = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtUtil.generateToken(authentication);
-        String finalToken = "Bearer " + token;
-        return ResponseEntity.ok().header(Constants.HEADER_STRING, "Bearer " + token).body(finalToken);
-    }
-
-    @GetMapping(value = "/users")
-    public ResponseEntity<?> getUsers(){
-        URI selfLink = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
-        return ResponseEntity.ok().body(userRepository.findAll());
-    }
 }

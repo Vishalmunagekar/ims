@@ -30,6 +30,14 @@ public class ApplicationExceptionController  {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ApplicationRoleNotFoundException.class)
+    private final ResponseEntity<ErrorResponse> handleApplicationRoleNotFoundException(ApplicationRoleNotFoundException exception){
+        List<String> errorDetails = new ArrayList<>();
+        errorDetails.add(exception.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), " ",errorDetails);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         List<String> errorDetails = new ArrayList<>();
