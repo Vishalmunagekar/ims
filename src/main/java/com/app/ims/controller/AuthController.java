@@ -2,7 +2,11 @@ package com.app.ims.controller;
 
 import com.app.ims.common.Constants;
 import com.app.ims.model.User;
+import com.app.ims.security.model.AuthenticationResponse;
+import com.app.ims.security.model.LoginRequest;
+import com.app.ims.security.model.RefreshTokenRequest;
 import com.app.ims.service.AuthService;
+import com.app.ims.service.RefreshTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +23,9 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody User user){
-        LOGGER.debug("login method User : {}", user.toString());
-        String bearer_token = authService.login(user);
-        return ResponseEntity.ok().header(Constants.HEADER_STRING, bearer_token).body(bearer_token);
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest){
+        LOGGER.debug("login method loginRequest : {}", loginRequest.toString());
+        return ResponseEntity.ok().body(authService.login(loginRequest));
     }
 
     @PostMapping(value = "/signup")
@@ -33,9 +36,8 @@ public class AuthController {
     }
 
     @PostMapping(value = "/refreshToken")
-    public ResponseEntity<?> refreshToken(@PathVariable String token){
-        LOGGER.debug("refreshToken method token : {}", token);
-        // TO DO
-        return new ResponseEntity<>("", HttpStatus.OK);
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        LOGGER.debug("refreshToken method refreshTokenRequest : {}", refreshTokenRequest.toString());
+        return new ResponseEntity<>(authService.refreshToken(refreshTokenRequest), HttpStatus.OK);
     }
 }

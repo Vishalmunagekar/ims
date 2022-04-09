@@ -7,6 +7,9 @@ import com.app.ims.model.User;
 import com.app.ims.repository.RoleRepository;
 import com.app.ims.repository.UserRepository;
 import com.app.ims.security.jwt.JwtUtil;
+import com.app.ims.security.model.AuthenticationResponse;
+import com.app.ims.security.model.LoginRequest;
+import com.app.ims.security.model.RefreshTokenRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -31,16 +38,22 @@ public class AuthService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
+    private RefreshTokenService refreshTokenService;
+    @Autowired
     private JwtUtil jwtUtil;
 
-    public String login(User user){
-        LOGGER.debug("login method User : {}", user.toString());
+    public AuthenticationResponse login(LoginRequest loginRequest){
+        LOGGER.debug("login method LoginRequest : {}", loginRequest.toString());
 
         final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return String.format("Bearer %s", jwtUtil.generateToken(authentication));
+        return AuthenticationResponse.builder()
+                .authenticationToken(jwtUtil.generateToken(authentication, loginRequest.getUsername()))
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .username(loginRequest.getUsername())
+                .build();
     }
 
     public User signup(User user){
@@ -64,10 +77,19 @@ public class AuthService {
         return userRepository.save(new_user);
     }
 
-    public String refreshToken(String token){
-        LOGGER.debug("refreshToken method token : {}", token);
-        // TO DO
-        return "";
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
+        LOGGER.debug("refreshToken method refreshTokenRequest : {}", refreshTokenRequest.toString());
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        User user = userRepository.findByUsername(refreshTokenRequest.getUsername());
+        LOGGER.debug("findByUsername method user : {}", user.toString());
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        user.getRoles().forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName())));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, grantedAuthorities);
+        return AuthenticationResponse.builder()
+                .authenticationToken(jwtUtil.generateToken(authentication, user.getUsername()))
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .username(user.getUsername())
+                .build();
     }
 
 }
