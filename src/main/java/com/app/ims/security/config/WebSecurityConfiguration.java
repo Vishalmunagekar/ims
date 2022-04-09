@@ -1,6 +1,7 @@
 package com.app.ims.security.config;
 
 import com.app.ims.common.Constants;
+import com.app.ims.security.filter.ApplicationAuthenticationEntryPoint;
 import com.app.ims.security.filter.JwtAuthenticationFilter;
 import com.app.ims.security.service.ImsUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -12,8 +13,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -40,6 +43,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+//    @Bean
+//    public AuthenticationEntryPoint authenticationEntryPoint(){
+//        return new ApplicationAuthenticationEntryPoint();
+//    }
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
@@ -62,11 +70,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-ui/**", "/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/api/application/init", "/api/application/login").permitAll()
+                .antMatchers("/api/application/init","/api/auth/**").permitAll()
                 .antMatchers("/api/user/**").hasAuthority(Constants.ADMIN_ROLE)
                 .antMatchers("/api/order/**", "/api/product/**","/api/test/**").hasAnyAuthority(Constants.ADMIN_ROLE, Constants.USER_ROLE)
                 .anyRequest()
                 .authenticated();
+                //.and()
+                //.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).and()
+               // .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);;
         httpSecurity.headers().frameOptions().disable(); //to access h2 database console
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

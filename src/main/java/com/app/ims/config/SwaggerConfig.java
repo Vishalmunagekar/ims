@@ -18,8 +18,8 @@ public class SwaggerConfig {
     public OpenAPI tuitionApiDoc() {
         StringSchema schema = new StringSchema();
         return new OpenAPI()
-                .info(new Info().title("TRP Tuition")
-                        .description("API documentation for tuition Management System")
+                .info(new Info().title("Inventory Management Application")
+                        .description("API documentation for Inventory Management Application")
                         .version("v0.0.1")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
