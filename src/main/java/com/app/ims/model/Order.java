@@ -1,6 +1,5 @@
 package com.app.ims.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,9 +22,7 @@ public class Order extends BaseEntity {
 
     private String description;
 
-    @ApiModelProperty(value = "Account Number in this system")
     private String internalAccountNumber;
-    @ApiModelProperty(value = "Account Number in an external system")
     private String externalAccountNumber;
 
     @Enumerated(EnumType.STRING)
