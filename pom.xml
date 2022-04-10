@@ -11,11 +11,12 @@
 	<groupId>com.app</groupId>
 	<artifactId>ims</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inventory-management</name>
-	<description>Spring Boot project</description>
 	<packaging>war</packaging>
+	<name>inventory-management</name>
+	<description>Inventory Management System</description>
 	<properties>
 		<java.version>11</java.version>
+<!--		<start-class>com.app.ims.InventoryManagementApplication</start-class>-->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -33,6 +34,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>compile</scope>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.flywaydb</groupId>-->
@@ -90,11 +96,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<!--<scope>provided</scope>-->
 		</dependency>
 	</dependencies>
 

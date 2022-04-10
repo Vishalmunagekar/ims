@@ -63,7 +63,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
+        httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/index.html/**", "/css/**", "/js/**").permitAll()
                 // this below line can bypass your srping security.

@@ -5,11 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableWebMvc
 public class InventoryManagementApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -17,8 +15,7 @@ public class InventoryManagementApplication extends SpringBootServletInitializer
 	}
 
 	@Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(InventoryManagementApplication.class);
-    }
-
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(InventoryManagementApplication.class);
+	}
 }
