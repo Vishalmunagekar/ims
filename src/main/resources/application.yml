@@ -1,10 +1,11 @@
 server:
   port: 8080
-  context-path: "/"
+  servlet:
+    context-path: /ims
 
 logging:
   level:
-    root: ERROR
+    root: INFO
     org.springframework.web: ERROR
     com.app.ims: DEBUG
     org.hibernate: ERROR
