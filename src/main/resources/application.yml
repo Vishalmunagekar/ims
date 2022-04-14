@@ -16,16 +16,27 @@ spring:
     user:
       name: user
       password: password
+
+## H2 database properties
   h2:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb
+    platform: h2
+    url: jdbc:h2:mem:ims
     generate-unique-name: false
+  ## DB2 database properties
+#  datasource:
+#    platform: oracle
+#    url: jdbc:db2://10.254.188.56:50000/BAPPST
+#    driver-class-name: com.ibm.db2.jcc.DB2Driver
+#    username: root
+#    password: <secret>
+#    data: data-db2.sql
 
+## Common Database properties
   jpa:
     generate-ddl: true
-
     hibernate:
       ddl-auto: update
 

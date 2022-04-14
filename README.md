@@ -29,8 +29,18 @@ http://localhost:8080/ims/swagger-ui.html
 ```
 # Buil Spring boot application
 mvn clean install
+
 # Run Spring Boot app using Maven:
 mvn spring-boot:run
+
 # Run Spring Boot app with java -jar command
 java -jar target/ims-0.0.1-SNAPSHOT.jar
 ```
+
+## Initialize a Database Using Basic SQL Scripts
+Spring JDBC has a DataSource initializer feature. Spring Boot enables it by default and loads SQL from the standard locations schema.sql and data.sql (in the root of the classpath). In addition Spring Boot will load the schema-${platform}.sql and data-${platform}.sql files (if present).
+
+- You may define the platform with: spring.datasource.platform=oracle.
+- You may change the name of the sql script to load with: spring.datasource.data=myscript.sql.
+- Along with data.sql, Spring-boot also loads schema.sql (before data.sql).
+- You could also have an "update or insert" logic in your data.sql: oracle sql: update if exists else insert
