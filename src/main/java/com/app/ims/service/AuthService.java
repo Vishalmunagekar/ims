@@ -2,15 +2,13 @@ package com.app.ims.service;
 
 
 import com.app.ims.common.ApplicationRoleNotFoundException;
+import com.app.ims.common.Constants;
+import com.app.ims.dto.*;
 import com.app.ims.model.Role;
 import com.app.ims.model.User;
 import com.app.ims.repository.RoleRepository;
 import com.app.ims.repository.UserRepository;
 import com.app.ims.security.jwt.JwtUtil;
-import com.app.ims.security.model.AuthenticationResponse;
-import com.app.ims.security.model.LoginRequest;
-import com.app.ims.security.model.RefreshTokenRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +18,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -41,6 +37,8 @@ public class AuthService {
     private RefreshTokenService refreshTokenService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse login(LoginRequest loginRequest){
         LOGGER.debug("login method LoginRequest : {}", loginRequest.toString());
@@ -52,14 +50,15 @@ public class AuthService {
         return AuthenticationResponse.builder()
                 .authenticationToken(jwtUtil.generateToken(authentication, loginRequest.getUsername()))
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiration(new Date(System.currentTimeMillis() + Constants.TokenExpiration))
                 .username(loginRequest.getUsername())
                 .build();
     }
 
-    public User signup(User user){
+    public SignupResponse signup(SignupRequest signupRequest){
         Set<Role> roles = new HashSet<>();
 
-        user.getRoles().forEach((role) -> {
+        signupRequest.getRoles().forEach((role) -> {
             Role role1 = roleRepository.findByRoleName(role.getRoleName().toUpperCase()).orElseThrow(
                     () -> new ApplicationRoleNotFoundException("Role " + role.getRoleName().toUpperCase() + " not found!")
             );
@@ -68,13 +67,14 @@ public class AuthService {
         });
 
         User new_user = new User();
-        new_user.setUsername(user.getUsername());
-        new_user.setPassword(user.getPassword());
-        new_user.setFirstName(user.getFirstName());
-        new_user.setLastName(user.getLastName());
-        new_user.setContact(user.getContact());
+        new_user.setUsername(signupRequest.getUsername());
+        new_user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        new_user.setFirstName(signupRequest.getFirstName());
+        new_user.setLastName(signupRequest.getLastName());
+        new_user.setContact(signupRequest.getContact());
         new_user.setRoles(roles);
-        return userRepository.save(new_user);
+        User save = userRepository.save(new_user);
+        return new SignupResponse(save.getId(),save.getUsername(),save.getFirstName(),save.getLastName(),save.getContact(),save.getRoles());
     }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
@@ -88,6 +88,7 @@ public class AuthService {
         return AuthenticationResponse.builder()
                 .authenticationToken(jwtUtil.generateToken(authentication, user.getUsername()))
                 .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiration(new Date(System.currentTimeMillis() + Constants.TokenExpiration))
                 .username(user.getUsername())
                 .build();
     }

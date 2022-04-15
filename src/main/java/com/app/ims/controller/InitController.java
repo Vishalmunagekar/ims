@@ -1,32 +1,27 @@
 package com.app.ims.controller;
 
 
-import com.app.ims.common.Constants;
-import com.app.ims.model.User;
 import com.app.ims.repository.UserRepository;
 import com.app.ims.security.filter.JwtAuthenticationFilter;
 import com.app.ims.security.jwt.JwtUtil;
-import com.app.ims.service.ApplicationService;
+import com.app.ims.service.InitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 @RestController()
-@RequestMapping(value = "api/application")
-public class ApplicationController {
+@RequestMapping(value = "api/")
+public class InitController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(InitController.class);
     @Autowired
-    private ApplicationService applicationService;
+    private InitService initService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -37,7 +32,7 @@ public class ApplicationController {
     @GetMapping(value = "/init")
     public ResponseEntity<String> init(){
         URI selfLink = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
-        if(applicationService.init1() && applicationService.init2()){
+        if(initService.init1() && initService.init2()){
             return ResponseEntity.created(selfLink).body("Success!");
         }
         return ResponseEntity.notFound().build();

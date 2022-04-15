@@ -1,4 +1,4 @@
-package com.app.ims.security.model;
+package com.app.ims.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,9 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class AuthenticationResponse {
+
     private String authenticationToken;
     private String refreshToken;
+    private Date expiration;
     private String username;
 }

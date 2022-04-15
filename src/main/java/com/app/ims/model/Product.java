@@ -33,5 +33,5 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
-    private Double totalCost;
+    private Double price;
 }

@@ -5,9 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,15 +14,13 @@ import java.util.function.Function;
 @Configuration
 public class JwtUtil  implements Serializable {
 
-    private final Long twoWeeks = Long.valueOf(1296000000);
-
     public String generateToken(Authentication authentication, String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim(Constants.AUTHORITIES_KEY, authentication.getAuthorities())
                 .signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + twoWeeks))
+                .setExpiration(new Date(System.currentTimeMillis() + Constants.TokenExpiration))
                 .compact();
     }
 
