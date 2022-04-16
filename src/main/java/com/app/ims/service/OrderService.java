@@ -3,9 +3,11 @@ package com.app.ims.service;
 import com.app.ims.common.DiscountValueWrongException;
 import com.app.ims.common.OrderTotalPriceNotCorrectException;
 import com.app.ims.dto.CreateOrderRequest;
+import com.app.ims.model.Customer;
 import com.app.ims.model.Order;
 import com.app.ims.model.OrderDetail;
 import com.app.ims.model.Product;
+import com.app.ims.repository.CustomerRepository;
 import com.app.ims.repository.OrderRepository;
 import com.app.ims.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,8 @@ public class OrderService {
     private OrderRepository orderRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public Order getOrderById(Long id){
         return orderRepository.findById(id).get();
@@ -50,6 +55,18 @@ public class OrderService {
         validateOrderTotalPrice(orderRequest, order, orderDetailSet);
         order.setDiscount(orderRequest.getDiscount());
         order.setTotalPrice(orderRequest.getTotalPrice());
+        Optional<Customer> customerByContact = customerRepository.findByContact(orderRequest.getCustomer().getContact());
+        if(customerByContact.isPresent()) {
+            order.setCustomer(customerByContact.get());
+        } else if(!customerByContact.isPresent()) {
+            Optional<Customer> customerByEmail = customerRepository.findByEmail(orderRequest.getCustomer().getEmail());
+            if(customerByEmail.isPresent()){
+                order.setCustomer(customerByEmail.get());
+            } else {
+                Customer newCustomer = customerRepository.save(orderRequest.getCustomer());
+                order.setCustomer(newCustomer);
+            }
+        }
         return orderRepository.save(order);
     }
 
