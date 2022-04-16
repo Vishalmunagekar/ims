@@ -5,15 +5,15 @@ import com.app.ims.dto.CreateProductRequest;
 import com.app.ims.dto.UpdateProductRequest;
 import com.app.ims.model.Product;
 import com.app.ims.model.ProductType;
-import com.app.ims.repository.ProductRepository;
+import com.app.ims.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,57 +23,56 @@ import java.util.List;
 @RequestMapping(value = "api/product")
 public class ProductController {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Product> getProductById(@NotNull @PathVariable Long id){
-        return new ResponseEntity<Product>(productRepository.findById(id).get(), HttpStatus.OK);
+        LOGGER.debug("getProductById id : {}", id);
+        return new ResponseEntity<Product>(productService.getProductById(id), HttpStatus.OK);
     }
 
     @GetMapping(value = "/all")
     public ResponseEntity<List<Product>> getAllProducts(){
-        return new ResponseEntity<List<Product>>(productRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<List<Product>>(productService.getAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/code/{code}")
     public ResponseEntity<Page<Product>> getProductByCode(@NotBlank @PathVariable String code){
-        return new ResponseEntity<>(productRepository.findByCodeContains(code, PageRequest.ofSize(10)), HttpStatus.OK);
+        LOGGER.debug("getProductByCode code : {}", code);
+        return new ResponseEntity<>(productService.getProductByCode(code), HttpStatus.OK);
     }
 
     @GetMapping(value = "/type/{type}")
     public ResponseEntity<Page<Product>> getProductByType(@NotBlank @PathVariable ProductType type){
-        return new ResponseEntity<>(productRepository.findByType(type, PageRequest.ofSize(10)), HttpStatus.OK);
+        LOGGER.debug("getProductByType type : {}", type);
+        return new ResponseEntity<>(productService.getProductByType(type), HttpStatus.OK);
     }
 
     @GetMapping(value = "/name/{name}")
     public ResponseEntity<Page<Product>> getProductByName(@NotBlank @PathVariable String name){
-        return new ResponseEntity<>(productRepository.findByNameContains(name, PageRequest.ofSize(10)), HttpStatus.OK);
+        LOGGER.debug("getProductByName name : {}", name);
+        return new ResponseEntity<>(productService.getProductByName(name), HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<Product> createProduct(@Valid @RequestBody CreateProductRequest productRequest){
-        Product product = new Product();
-        product.setName(productRequest.getName());
-        product.setCode(productRequest.getCode());
-        product.setType(productRequest.getType());
-        product.setPrice(productRequest.getPrice());
-        return new ResponseEntity<>(productRepository.save(product), HttpStatus.CREATED);
+        LOGGER.debug("createProduct Product : {}", productRequest.toString());
+        return new ResponseEntity<>(productService.createProduct(productRequest), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateProductById(@NotNull @PathVariable Long id, @Valid @RequestBody UpdateProductRequest productRequest){
-        Product optionalProduct = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id : " + id));
-        optionalProduct.setName(productRequest.getName());
-        optionalProduct.setType(productRequest.getType());
-        optionalProduct.setPrice(productRequest.getPrice());
-        optionalProduct.setCode(productRequest.getCode());
-        return new ResponseEntity<>(productRepository.save(optionalProduct), HttpStatus.CREATED);
+        LOGGER.debug("updateProductById id : {} and productRequest : {}", id, productRequest.toString());
+        return new ResponseEntity<>(productService.updateProductById(id,productRequest), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteProductById(@NotNull @PathVariable Long id){
-        productRepository.deleteById(id);
+        LOGGER.debug("deleteProductById id : {}", id);
+        productService.deleteProductById(id);
         return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
     }
 }
