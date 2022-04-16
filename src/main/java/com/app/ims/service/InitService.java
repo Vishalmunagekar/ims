@@ -2,10 +2,7 @@ package com.app.ims.service;
 
 import com.app.ims.common.Constants;
 import com.app.ims.model.*;
-import com.app.ims.repository.OrderRepository;
-import com.app.ims.repository.ProductRepository;
-import com.app.ims.repository.RoleRepository;
-import com.app.ims.repository.UserRepository;
+import com.app.ims.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +19,16 @@ public class InitService {
 
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public Boolean init1(){
         Role role1 = new Role();
@@ -95,6 +91,13 @@ public class InitService {
         orderDetail2.setPrice(Double.valueOf(60000));
         orderDetail2.setQuantity(2);
 
+        Customer customer = new Customer();
+        customer.setName("Marc Witter");
+        customer.setEmail("marcwitter@gmail.com");
+        customer.setContact("9922581049");
+        Customer save = customerRepository.save(customer);
+        order.setCustomer(save);
+
         order.addOrderDetails(orderDetail1);
         order.addOrderDetails(orderDetail2);
 
@@ -152,6 +155,13 @@ public class InitService {
 
         order.addOrderDetails(orderDetail1);
         order.addOrderDetails(orderDetail2);
+
+        Customer customer = new Customer();
+        customer.setName("Vesa hekkinson");
+        customer.setEmail("vesahekkinson@gmail.com");
+        customer.setContact("9422581049");
+        Customer save = customerRepository.save(customer);
+        order.setCustomer(save);
 
         orderRepository.save(order);
 
