@@ -10,14 +10,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 @AllArgsConstructor
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -60,7 +61,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors().and().csrf().disable()
+        httpSecurity.cors().and()
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/", "/index.html/**", "/css/**", "/js/**").permitAll()
                 // this below line can bypass your spring security.
@@ -72,9 +76,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/order/**", "/api/product/**","/api/test/**").hasAnyAuthority(Constants.ADMIN_ROLE, Constants.USER_ROLE)
                 .anyRequest()
                 .authenticated();
-                //.and()
-                //.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).and()
-               // .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);;
         httpSecurity.headers().frameOptions().disable(); //to access h2 database console
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

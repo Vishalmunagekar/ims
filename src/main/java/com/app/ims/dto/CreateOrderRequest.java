@@ -23,6 +23,7 @@ public class CreateOrderRequest {
     private OrderStatus status;
     private Date date;
     private Integer TotalItems;
+    private Double discount;
     private Double totalPrice;
     private Set<OrderDetail> orderDetailSet = new HashSet<OrderDetail>();
 }

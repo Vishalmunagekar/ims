@@ -9,6 +9,8 @@ import com.app.ims.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,7 @@ import java.util.Optional;
 @Service
 public class InitService {
 
-    private final Logger log = LoggerFactory.getLogger(InitService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(InitService.class);
 
     @Autowired
     private RoleRepository roleRepository;
@@ -43,7 +45,7 @@ public class InitService {
         role2.setRoleName(Constants.ADMIN_ROLE);
         role2.setDescription("Admin Description");
         roleRepository.save(role2);
-        //Role USER_ROLE = roleRepository.findByRoleName(Constants.USER_ROLE).orElseThrow(() -> new EntityNotFoundException(String.format("Role not found by Name : %s", Constants.USER_ROLE)));
+
         Optional<Role> USER_ROLE = roleRepository.findByRoleName(Constants.USER_ROLE);
         Optional<Role> ADMIN_ROLE = roleRepository.findByRoleName(Constants.ADMIN_ROLE);
 
@@ -54,7 +56,6 @@ public class InitService {
         user1.setUsername("vishalm");
         user1.setPassword(passwordEncoder.encode("qwertyui"));
 
-        //user1.addRoles(Set.of(USER_ROLE.get(),ADMIN_ROLE.get()));
         user1.addRoles(USER_ROLE.get());
         user1.addRoles(ADMIN_ROLE.get());
         userRepository.save(user1);
@@ -81,6 +82,7 @@ public class InitService {
         order.setInternalAccountNumber("221533648652");
         order.setStatus(OrderStatus.finalized);
         order.setTotalItems(3);
+        order.setDiscount(Double.valueOf(0.10));
         order.setTotalPrice(Double.valueOf(110000));
 
         OrderDetail orderDetail1 = new OrderDetail();
@@ -135,6 +137,7 @@ public class InitService {
         order.setInternalAccountNumber("221533648652");
         order.setStatus(OrderStatus.finalized);
         order.setTotalItems(3);
+        order.setDiscount(Double.valueOf(0.10));
         order.setTotalPrice(Double.valueOf(5000));
 
         OrderDetail orderDetail1 = new OrderDetail();

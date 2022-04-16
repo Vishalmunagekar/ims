@@ -6,7 +6,7 @@ server:
 logging:
   level:
     root: INFO
-    org.springframework.web: ERROR
+    org.springframework.web: DEBUG
     com.app.ims: DEBUG
     org.hibernate: ERROR
 

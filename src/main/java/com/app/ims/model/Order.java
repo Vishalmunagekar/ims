@@ -31,6 +31,7 @@ public class Order extends BaseEntity {
     private Date date;
     private Integer TotalItems;
     private Double totalPrice;
+    private Double discount;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
