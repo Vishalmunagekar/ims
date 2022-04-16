@@ -41,9 +41,9 @@ public class AuthService {
 
     public AuthenticationResponse login(LoginRequest loginRequest){
         LOGGER.debug("login method LoginRequest : {}", loginRequest.toString());
-
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        LOGGER.debug("user {} successfully logged in", loginRequest.getUsername());
         return AuthenticationResponse.builder()
                 .authenticationToken(jwtUtil.generateToken(authentication, loginRequest.getUsername()))
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
@@ -53,8 +53,8 @@ public class AuthService {
     }
 
     public SignupResponse signup(SignupRequest signupRequest){
+        LOGGER.debug("signup method signupRequest : {}", signupRequest.getUsername());
         Set<Role> roles = new HashSet<>();
-
         signupRequest.getRoles().forEach((role) -> {
             Role role1 = roleRepository.findByRoleName(role.getRoleName().toUpperCase()).orElseThrow(
                     () -> new ApplicationRoleNotFoundException("Role " + role.getRoleName().toUpperCase() + " not found!")
@@ -71,6 +71,7 @@ public class AuthService {
         new_user.setContact(signupRequest.getContact());
         new_user.setRoles(roles);
         User save = userRepository.save(new_user);
+        LOGGER.debug("New user saved with id : {}", save.getId());
         return new SignupResponse(save.getId(),save.getUsername(),save.getFirstName(),save.getLastName(),save.getContact(),save.getRoles());
     }
 

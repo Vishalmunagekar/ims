@@ -53,3 +53,19 @@ Spring JDBC has a DataSource initializer feature. Spring Boot enables it by defa
 - (?=.*[@#$%^&+=]) a special character must occur at least once
 - (?=\\S+$) no whitespace allowed in the entire string
 - .{8,} at least 8 characters
+
+## Name validation using regexp
+    ^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)
+I have created a custom regex to deal with names and have tried these types of names and found working perfect
+ **John Smith, John D'Largy, John Doe-Smith, John Doe Smith, Hector Sausage-Hausen, Mathias d'Arras, Martin Luther King, Ai Wong, Chao Chang, Alzbeta Bara**
+
+```REGEXP
+^               // start of line
+[a-zA-Z]{2,}    // will except a name with at least two characters
+\s              // will look for white space between name and surname
+[a-zA-Z]{1,}    // needs at least 1 Character
+\'?-?           // possibility of **'** or **-** for double barreled and hyphenated surnames
+[a-zA-Z]{2,}    // will except a name with at least two characters
+\s?             // possibility of another whitespace
+([a-zA-Z]{1,})? // possibility of a second surname
+```

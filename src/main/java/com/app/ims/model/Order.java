@@ -37,6 +37,9 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "order_id")
     private Set<OrderDetail> orderDetailSet = new HashSet<OrderDetail>();
 
+    @ManyToOne
+    private Customer customer;
+
     public void addOrderDetails(OrderDetail orderDetail){
         this.orderDetailSet.add(orderDetail);
     }
