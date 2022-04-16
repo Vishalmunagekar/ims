@@ -1,5 +1,6 @@
 package com.app.ims.dto;
 
+import com.app.ims.model.Customer;
 import com.app.ims.model.OrderDetail;
 import com.app.ims.model.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,6 @@ public class CreateOrderRequest {
     private Integer TotalItems;
     private Double discount;
     private Double totalPrice;
+    private Customer customer;
     private Set<OrderDetail> orderDetailSet = new HashSet<OrderDetail>();
 }
