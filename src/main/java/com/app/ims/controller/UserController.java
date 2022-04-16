@@ -1,5 +1,7 @@
 package com.app.ims.controller;
 
+import com.app.ims.dto.UpdateUserRequest;
+import com.app.ims.dto.UpdateUserResponse;
 import com.app.ims.model.Role;
 import com.app.ims.model.User;
 import com.app.ims.repository.RoleRepository;
@@ -9,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +30,17 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
+    public ResponseEntity<User> getUserById(@NotNull @PathVariable Long id){
         LOGGER.debug("getUserById : {}",id);
         return new ResponseEntity<User>(userRepository.findById(id).get(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username){
+    public ResponseEntity<User> getUserByUsername(@NotBlank @PathVariable String username){
         LOGGER.debug("getUserByUsername : {}",username);
         return new ResponseEntity<>(userRepository.findByUsername(username), HttpStatus.OK);
     }
@@ -42,40 +50,28 @@ public class UserController {
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping()
-    public ResponseEntity<?> createUser(@RequestBody User user){
-        LOGGER.debug("createUser : {}",user.toString());
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(user.getPassword());
-        newUser.setContact(user.getContact());
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-
-        user.getRoles().forEach(role -> {
-            Optional<Role> optionalRole = roleRepository.findByRoleName(role.getRoleName());
-            newUser.addRoles(optionalRole.get());
-        });
-        return new ResponseEntity<>(userRepository.save(newUser), HttpStatus.CREATED);
-    }
-
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateUserById(@PathVariable Long id, @RequestBody User user){
+    public ResponseEntity<UpdateUserResponse> updateUserById(@NotNull @PathVariable Long id, @Valid @RequestBody UpdateUserRequest updateUserRequest){
         LOGGER.debug("updateUserById id : {}", id);
-        LOGGER.debug("updateUserById User : {}",user.toString());
+        LOGGER.debug("updateUserById User : {}",updateUserRequest.toString());
 
         User optionalUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id : " + id));
-        optionalUser.setUsername(user.getUsername());
-        optionalUser.setPassword(user.getPassword());
-        optionalUser.setContact(user.getContact());
-        optionalUser.setFirstName(user.getFirstName());
-        optionalUser.setLastName(user.getLastName());
-        optionalUser.setRoles(user.getRoles());
-        return new ResponseEntity<>(userRepository.save(optionalUser), HttpStatus.CREATED);
+        optionalUser.setUsername(updateUserRequest.getUsername());
+        optionalUser.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
+        optionalUser.setContact(updateUserRequest.getContact());
+        optionalUser.setFirstName(updateUserRequest.getFirstName());
+        optionalUser.setLastName(updateUserRequest.getLastName());
+        User update = userRepository.save(optionalUser);
+        return new ResponseEntity<>(new UpdateUserResponse(update.getId(),
+                update.getUsername(),
+                update.getFirstName(),
+                update.getLastName(),
+                update.getContact(),
+                update.getRoles()), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable Long id){
+    public ResponseEntity<?> deleteUserById(@NotNull @PathVariable Long id){
         userRepository.deleteById(id);
         return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
     }

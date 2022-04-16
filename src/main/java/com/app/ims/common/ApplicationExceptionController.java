@@ -30,6 +30,22 @@ public class ApplicationExceptionController  {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(OrderTotalPriceNotCorrectException.class)
+    private final ResponseEntity<ErrorResponse> handleOrderTotalPriceNotCorrectException(OrderTotalPriceNotCorrectException exception){
+        List<String> errorDetails = new ArrayList<>();
+        errorDetails.add(exception.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), "pls, calculate order price again",errorDetails);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DiscountValueWrongException.class)
+    private final ResponseEntity<ErrorResponse> handleDiscountValueWrongException(DiscountValueWrongException exception){
+        List<String> errorDetails = new ArrayList<>();
+        errorDetails.add(exception.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), "pls, provide valid discount vaue e.g : 10, 15, 20.",errorDetails);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ApplicationRoleNotFoundException.class)
     private final ResponseEntity<ErrorResponse> handleApplicationRoleNotFoundException(ApplicationRoleNotFoundException exception){
         List<String> errorDetails = new ArrayList<>();

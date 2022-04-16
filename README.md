@@ -44,3 +44,12 @@ Spring JDBC has a DataSource initializer feature. Spring Boot enables it by defa
 - You may change the name of the sql script to load with: spring.datasource.data=myscript.sql.
 - Along with data.sql, Spring-boot also loads schema.sql (before data.sql).
 - You could also have an "update or insert" logic in your data.sql: oracle sql: update if exists else insert
+
+## Password validation using regexp
+    (?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}
+- (?=.*[0-9]) a digit must occur at least once
+- (?=.*[a-z]) a lower case letter must occur at least once
+- (?=.*[A-Z]) an upper case letter must occur at least once
+- (?=.*[@#$%^&+=]) a special character must occur at least once
+- (?=\\S+$) no whitespace allowed in the entire string
+- .{8,} at least 8 characters

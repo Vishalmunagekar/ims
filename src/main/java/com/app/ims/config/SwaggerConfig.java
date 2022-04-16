@@ -1,5 +1,6 @@
 package com.app.ims.config;
 
+import com.app.ims.common.Constants;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -25,7 +26,7 @@ public class SwaggerConfig {
                 .externalDocs(new ExternalDocumentation()
                         .description("SpringShop Wiki Documentation")
                         .url("https://springshop.wiki.github.org/docs"))
-                .components(new Components().addParameters("JwtToken", new HeaderParameter().required(true).name("Authorization").description("Bearer {token}").schema(schema)));
+                .components(new Components().addParameters("JwtToken", new HeaderParameter().required(true).name(Constants.HEADER_STRING).description("Bearer {token}").schema(schema)));
     }
 
     //need to test In Local

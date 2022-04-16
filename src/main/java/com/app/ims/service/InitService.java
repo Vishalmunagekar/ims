@@ -9,15 +9,18 @@ import com.app.ims.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class ApplicationService {
+public class InitService {
 
-    private final Logger log = LoggerFactory.getLogger(ApplicationService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(InitService.class);
 
     @Autowired
     private RoleRepository roleRepository;
@@ -30,6 +33,8 @@ public class ApplicationService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Boolean init1(){
         Role role1 = new Role();
@@ -40,7 +45,7 @@ public class ApplicationService {
         role2.setRoleName(Constants.ADMIN_ROLE);
         role2.setDescription("Admin Description");
         roleRepository.save(role2);
-        //Role USER_ROLE = roleRepository.findByRoleName(Constants.USER_ROLE).orElseThrow(() -> new EntityNotFoundException(String.format("Role not found by Name : %s", Constants.USER_ROLE)));
+
         Optional<Role> USER_ROLE = roleRepository.findByRoleName(Constants.USER_ROLE);
         Optional<Role> ADMIN_ROLE = roleRepository.findByRoleName(Constants.ADMIN_ROLE);
 
@@ -49,9 +54,8 @@ public class ApplicationService {
         user1.setLastName("Munagekar");
         user1.setContact("7843052772");
         user1.setUsername("vishalm");
-        user1.setPassword("qwertyui");
+        user1.setPassword(passwordEncoder.encode("qwertyui"));
 
-        //user1.addRoles(Set.of(USER_ROLE.get(),ADMIN_ROLE.get()));
         user1.addRoles(USER_ROLE.get());
         user1.addRoles(ADMIN_ROLE.get());
         userRepository.save(user1);
@@ -59,13 +63,13 @@ public class ApplicationService {
         Product product1 = new Product();
         product1.setName("IPHONE");
         product1.setCode("01");
-        product1.setTotalCost(Double.valueOf(50000));
+        product1.setPrice(Double.valueOf(50000));
         product1.setType(ProductType.R);
 
         Product product2 = new Product();
         product2.setName("ONEPLUS");
         product2.setCode("02");
-        product2.setTotalCost(Double.valueOf(30000));
+        product2.setPrice(Double.valueOf(30000));
         product2.setType(ProductType.L);
 
         productRepository.save(product1);
@@ -77,6 +81,9 @@ public class ApplicationService {
         order.setExternalAccountNumber("221533644789");
         order.setInternalAccountNumber("221533648652");
         order.setStatus(OrderStatus.finalized);
+        order.setTotalItems(3);
+        order.setDiscount(Double.valueOf(0.10));
+        order.setTotalPrice(Double.valueOf(110000));
 
         OrderDetail orderDetail1 = new OrderDetail();
         orderDetail1.setProduct(product1);
@@ -104,20 +111,20 @@ public class ApplicationService {
         user2.setLastName("Stark");
         user2.setContact("7843052773");
         user2.setUsername("tonys");
-        user2.setPassword("qwertyui");
+        user2.setPassword(passwordEncoder.encode("qwertyui"));
         user2.addRoles(ADMIN_ROLE.get());
         userRepository.save(user2);
 
         Product product1 = new Product();
         product1.setName("PATANJALI");
         product1.setCode("03");
-        product1.setTotalCost(Double.valueOf(3000));
+        product1.setPrice(Double.valueOf(3000));
         product1.setType(ProductType.C);
 
         Product product2 = new Product();
         product2.setName("WATER");
         product2.setCode("04");
-        product2.setTotalCost(Double.valueOf(2000));
+        product2.setPrice(Double.valueOf(2000));
         product2.setType(ProductType.M);
 
         productRepository.save(product1);
@@ -129,6 +136,9 @@ public class ApplicationService {
         order.setExternalAccountNumber("221533644789");
         order.setInternalAccountNumber("221533648652");
         order.setStatus(OrderStatus.finalized);
+        order.setTotalItems(3);
+        order.setDiscount(Double.valueOf(0.10));
+        order.setTotalPrice(Double.valueOf(5000));
 
         OrderDetail orderDetail1 = new OrderDetail();
         orderDetail1.setProduct(product1);

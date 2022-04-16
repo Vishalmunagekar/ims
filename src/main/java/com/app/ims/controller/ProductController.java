@@ -1,6 +1,8 @@
 package com.app.ims.controller;
 
 
+import com.app.ims.dto.CreateProductRequest;
+import com.app.ims.dto.UpdateProductRequest;
 import com.app.ims.model.Product;
 import com.app.ims.model.ProductType;
 import com.app.ims.repository.ProductRepository;
@@ -12,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -22,7 +27,7 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id){
+    public ResponseEntity<Product> getProductById(@NotNull @PathVariable Long id){
         return new ResponseEntity<Product>(productRepository.findById(id).get(), HttpStatus.OK);
     }
 
@@ -32,37 +37,42 @@ public class ProductController {
     }
 
     @GetMapping(value = "/code/{code}")
-    public ResponseEntity<Page<Product>> getProductByCode(@PathVariable String code){
-        return new ResponseEntity<>(productRepository.findByCodeContains(code, PageRequest.ofSize(5)), HttpStatus.OK);
+    public ResponseEntity<Page<Product>> getProductByCode(@NotBlank @PathVariable String code){
+        return new ResponseEntity<>(productRepository.findByCodeContains(code, PageRequest.ofSize(10)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/type/{type}")
-    public ResponseEntity<Page<Product>> getProductByType(@PathVariable ProductType type){
-        return new ResponseEntity<>(productRepository.findByType(type, PageRequest.ofSize(5)), HttpStatus.OK);
+    public ResponseEntity<Page<Product>> getProductByType(@NotBlank @PathVariable ProductType type){
+        return new ResponseEntity<>(productRepository.findByType(type, PageRequest.ofSize(10)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/name/{name}")
-    public ResponseEntity<Page<Product>> getProductByName(@PathVariable String name){
-        return new ResponseEntity<>(productRepository.findByNameContains(name, PageRequest.ofSize(5)), HttpStatus.OK);
+    public ResponseEntity<Page<Product>> getProductByName(@NotBlank @PathVariable String name){
+        return new ResponseEntity<>(productRepository.findByNameContains(name, PageRequest.ofSize(10)), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<?> createProduct(@RequestBody Product product){
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody CreateProductRequest productRequest){
+        Product product = new Product();
+        product.setName(productRequest.getName());
+        product.setCode(productRequest.getCode());
+        product.setType(productRequest.getType());
+        product.setPrice(productRequest.getPrice());
         return new ResponseEntity<>(productRepository.save(product), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateProductById(@PathVariable Long id, @RequestBody Product product){
+    public ResponseEntity<?> updateProductById(@NotNull @PathVariable Long id, @Valid @RequestBody UpdateProductRequest productRequest){
         Product optionalProduct = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id : " + id));
-        optionalProduct.setName(product.getName());
-        optionalProduct.setType(product.getType());
-        optionalProduct.setTotalCost(product.getTotalCost());
-        optionalProduct.setCode(product.getCode());
+        optionalProduct.setName(productRequest.getName());
+        optionalProduct.setType(productRequest.getType());
+        optionalProduct.setPrice(productRequest.getPrice());
+        optionalProduct.setCode(productRequest.getCode());
         return new ResponseEntity<>(productRepository.save(optionalProduct), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable Long id){
+    public ResponseEntity<?> deleteProductById(@NotNull @PathVariable Long id){
         productRepository.deleteById(id);
         return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
     }

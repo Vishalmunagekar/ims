@@ -43,7 +43,7 @@ public class User extends BaseEntity {
      * Roles are being eagerly loaded here because
      * they are a fairly small collection of items for this example.
      */
-    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
     @JoinTable(name="user_roles",
             joinColumns = {@JoinColumn(name="user_id", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="id")}
