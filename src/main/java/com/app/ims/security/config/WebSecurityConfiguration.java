@@ -61,22 +61,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        handleAuthorities(httpSecurity);
+        httpSecurity.headers().frameOptions().disable(); //to access h2 database console
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    private void handleAuthorities(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and()
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/", "/index.html/**", "/css/**", "/js/**").permitAll()
+                .antMatchers(Constants.ALLOWED_URL_PATHS).permitAll()
                 // this below line can bypass your spring security.
                 //.antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-ui/**", "/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/api/init","/api/auth/**").permitAll()
                 .antMatchers("/api/user/**").hasAuthority(Constants.ADMIN_ROLE)
                 .antMatchers("/api/order/**", "/api/product/**","/api/test/**").hasAnyAuthority(Constants.ADMIN_ROLE, Constants.USER_ROLE)
                 .anyRequest()
                 .authenticated();
-        httpSecurity.headers().frameOptions().disable(); //to access h2 database console
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

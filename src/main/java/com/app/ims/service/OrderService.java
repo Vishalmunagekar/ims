@@ -72,14 +72,14 @@ public class OrderService {
 
     public Order updateOrderById(Long id, Order order){
         LOGGER.debug("updateOrderById id : {} and Order : {}",id, order.toString());
-        Order optionalOrder = orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with id : " + id));
-        optionalOrder.setDate(new Date());
-        optionalOrder.setStatus(order.getStatus());
-        optionalOrder.setInternalAccountNumber(order.getInternalAccountNumber());
-        optionalOrder.setExternalAccountNumber(order.getExternalAccountNumber());
-        optionalOrder.setDescription(order.getDescription());
-        optionalOrder.setOrderDetailSet(order.getOrderDetailSet());
-        return orderRepository.save(optionalOrder);
+        Order Order = orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with id : " + id));
+        Order.setDate(new Date());
+        Order.setStatus(order.getStatus());
+        Order.setInternalAccountNumber(order.getInternalAccountNumber());
+        Order.setExternalAccountNumber(order.getExternalAccountNumber());
+        Order.setDescription(order.getDescription());
+        Order.setOrderDetailSet(order.getOrderDetailSet());
+        return orderRepository.save(Order);
     }
 
     public Boolean deleteOrderById(Long id){

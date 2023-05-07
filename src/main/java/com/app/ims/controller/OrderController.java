@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping(value = "api/order")
 public class OrderController {

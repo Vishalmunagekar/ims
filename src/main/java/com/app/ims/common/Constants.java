@@ -13,4 +13,5 @@ public class Constants {
     public static final Long twoWeeks = Long.valueOf(1296000000);
     public static final Long twoMinutes = Long.valueOf(120);
     public static final Long TokenExpiration = Long.valueOf(twoWeeks);
+    public static final String[] ALLOWED_URL_PATHS = {"/", "/index.html/**", "/css/**", "/js/**", "/swagger-ui/**", "/h2-console/**"};
 }
